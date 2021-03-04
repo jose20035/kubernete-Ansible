@@ -2,7 +2,7 @@
 - hosts: all
   become: true
   tasks:
-  - name: Install packages that allow apt to be used over HTTPS
+  - name: Instalación de paquetes para usar apt con HTTPS
     apt:
       name: "{{ packages }}"
       state: present
@@ -15,17 +15,17 @@
       - gnupg-agent
       - software-properties-common
 
-  - name: Add an apt signing key for Docker
+  - name: Añdir la clave del repostorio de docker
     apt_key:
       url: https://download.docker.com/linux/ubuntu/gpg
       state: present
 
-  - name: Add apt repository for stable version
+  - name: Añadir repositorio
     apt_repository:
       repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable
       state: present
 
-  - name: Install docker and its dependecies
+  - name: Instalar docker y sus dependencias
     apt: 
       name: "{{ packages }}"
       state: present
@@ -38,12 +38,12 @@
     notify:
       - docker status
 
-  - name: Add vagrant user to docker group
+  - name: Añadir el usuario vagrant al grupo docker
     user:
       name: vagrant
       group: docker
 
-  - name: Remove swapfile from /etc/fstab
+  - name: Quirtar la swap del /etc/fstab
     mount:
       name: "{{ item }}"
       fstype: swap
@@ -56,18 +56,18 @@
     command: swapoff -a
     when: ansible_swaptotal_mb > 0
 
-  - name: Add an apt signing key for Kubernetes
+  - name: Añadir la clave del repositorio Kubernetes
     apt_key:
       url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
       state: present
 
-  - name: Adding apt repository for Kubernetes
+  - name: Añadir el repositorio de Kubernetes
     apt_repository:
       repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
       state: present
       filename: kubernetes.list
 
-  - name: Install Kubernetes binaries
+  - name: Instalar binarios Kubernetes
     apt: 
       name: "{{ packages }}"
       state: present
@@ -78,7 +78,7 @@
         - kubeadm 
         - kubectl
 
-  - name: Configure node ip
+  - name: Configura node ip
     lineinfile:
       path: /etc/default/kubelet
       line: KUBELET_EXTRA_ARGS=--node-ip={{ node_ip }}
@@ -95,10 +95,10 @@
       name: docker
       state: restarted
 
-  - name: Copy the join command to server location
+  - name: Copa el archivo creado en el master
     copy: src=join-command dest=/tmp/join-command.sh mode=0777
 
-  - name: Join the node to cluster
+  - name: Entrar en el kuster
     command: sh /tmp/join-command.sh
 
   handlers:
