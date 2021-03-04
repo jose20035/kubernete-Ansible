@@ -1,0 +1,15 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-letschat
+spec:
+  rules:
+  - host: www.letschat.com
+    http:
+      paths:
+      - path: "/"
+        backend:
+          service:
+            name: letschat
+            port:
+              number: 8080
